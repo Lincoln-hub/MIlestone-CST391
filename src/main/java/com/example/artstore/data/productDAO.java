@@ -19,9 +19,9 @@ public class productDAO {
 
     }
 
+    //returns all the products in the PRODUCT table
     public List<product> findAll()
     {
-
         try {
             conn = DriverManager.getConnection(url,user,password);
             Statement st = conn.createStatement();
@@ -45,6 +45,7 @@ public class productDAO {
         return null;
     }
 
+    //returns a product by ID
     public List<product> findById(String id)
     {
         try {
@@ -71,14 +72,18 @@ public class productDAO {
         return null;
     }
 
+    //returns a product by name
     public List<product> findByName(String name)
     {
         try {
             conn = DriverManager.getConnection(url,user,password);
-            Statement st = conn.createStatement();
-            String sql = "SELECT * FROM PRODUCT WHERE PRODUCT_NAME  LIKE " + name+"%";
-            ResultSet rs = st.executeQuery(sql);
 
+            String sql = "SELECT * FROM PRODUCT WHERE PRODUCT_NAME  LIKE ?";
+
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setString(1, "%"+name+"%");
+
+            ResultSet rs = statement.executeQuery();
             List<product> rs1 = new ArrayList<>();
 
 
@@ -96,6 +101,7 @@ public class productDAO {
         return null;
     }
 
+    //deletes a product by Id
     public String deleteById(String id)
     {
         try {
@@ -111,6 +117,55 @@ public class productDAO {
             throwables.printStackTrace();
         }
         return null;
+    }
+
+    //adds a product to the PRODUCT table
+    public String addProduct(product product)
+    {
+        try {
+            conn = DriverManager.getConnection(url,user,password);
+            String name = product.getProductName();
+            String desc = product.getProductDescription();
+            String price = product.getProductPrice();
+
+            String sql = "INSERT INTO `PRODUCT` (`PRODUCT_NAME`, `PRODUCT_DESCRIPTION`, `PRODUCT_PRICE`) VALUES(?,?,?)";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setString(1, name);
+            statement.setString(2, desc);
+            statement.setString(3, price);
+
+            int rs = statement.executeUpdate();
+
+            return "Successfully added the product";
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            return throwables.toString();
+        }
+    }
+
+    //updates the price of a products by Id
+    public String updateProduct(product product)
+    {
+        try {
+            conn = DriverManager.getConnection(url,user,password);
+            Statement st = conn.createStatement();
+            String id = product.getId();
+            String price = product.getProductPrice();
+
+            String sql = "UPDATE `PRODUCT` SET `PRODUCT_PRICE` = ? WHERE ID = ?";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setString(1, price);
+            statement.setString(2, id);
+
+            int rs = statement.executeUpdate();
+
+            return "Successfully updated the product price";
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            return throwables.toString();
+        }
     }
 
 }

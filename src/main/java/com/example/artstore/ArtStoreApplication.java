@@ -11,7 +11,6 @@ public class ArtStoreApplication {
     public static void main(String[] args) {
         SpringApplication.run(ArtStoreApplication.class, args);
 
-        System.out.println("Whats up1111");
         String url = "jdbc:mysql://localhost:3306/artstoredb";
         String user ="root";
         String password ="root";
